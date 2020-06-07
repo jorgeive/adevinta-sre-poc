@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/affinity-mode: "persistent"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+  name: nginx-ingress-web
+  namespace: default
+spec:
+  tls:
+  - hosts:
+    - www.adevinta-test.com
+    secretName: adevinta-cert
+  rules:
+    - host: www.adevinta-test.com
+      http:
+        paths:
+          - path: /
+            backend:
+                serviceName: adevinta application
+                servicePort: 3000

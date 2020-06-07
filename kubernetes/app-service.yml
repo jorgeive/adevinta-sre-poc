@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adevinta-application
+  labels:
+    app: adevinta-application
+spec:
+  ports:
+    - port: 8000
+  selector:
+    app: adevinta-application
+    tier: frontend
+  type: ClusterIP

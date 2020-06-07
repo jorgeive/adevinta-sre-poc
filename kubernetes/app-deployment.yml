@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: adevinta-application
+  labels:
+    app: adevinta-application
+spec:
+  selector:
+    matchLabels:
+      app: adevinta-application
+      tier: frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: adevinta-application
+        tier: frontend
+    spec:
+      containers:
+      - image: jorgeive/sample-java-test-helloworld-app
+        name: adevinta-application
+        readinessProbe:
+          httpGet:
+            path: /users/1
+            port: 8000
+          initialDelaySeconds: 10
+          timeoutSeconds: 300
+          periodSeconds: 10
+          failureThreshold: 1
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /users/1
+            port: 8000
+          initialDelaySeconds: 20
+          timeoutSeconds: 2
+          periodSeconds: 8
+          failureThreshold: 
+          successThreshold: 1
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "200m"
+          limits:
+            memory: "200Mi"
+            cpu: "400m"
+        ports:
+        - containerPort: adevinta-application
+          name: adevinta-application

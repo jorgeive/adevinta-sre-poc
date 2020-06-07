@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: "jdbc:postgresql://postgresql.adevinta-test.com.lan:5432/postgres?currentSchema=hello_world"
+    username: adevinta
+    password: adevinta
+
+logging:
+  config: classpath:logback-aws.xml
+
+logback.access:
+  config: classpath:logback-access-aws.xml

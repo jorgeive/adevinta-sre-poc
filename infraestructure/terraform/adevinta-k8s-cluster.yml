@@ -1,0 +1,141 @@
+apiVersion: kops/v1alpha2
+kind: Cluster
+metadata:
+  name: k8s.adevinta-test.com
+spec:
+  api:
+    loadBalancer:
+      additionalSecurityGroups:
+      - sg-0bb8cd4b0b204560b
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudProvider: aws
+  configBase: s3://local.environment-kops-state/k8s.adevinta-test.com
+  etcdClusters:
+  - etcdMembers:
+    - instanceGroup: master-eu-west-3a
+      name: a
+    - instanceGroup: master-eu-west-3b
+      name: b
+    - instanceGroup: master-eu-west-3c
+      name: c
+    name: main
+  - etcdMembers:
+    - instanceGroup: master-eu-west-3a
+      name: a
+    - instanceGroup: master-eu-west-3b
+      name: b
+    - instanceGroup: master-eu-west-3c
+      name: c
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubernetesVersion: 1.15.3
+  masterPublicName: api.k8s.adevinta-test.com
+  networkCIDR: 10.0.0.0/16
+  networkID: vpc-0ef9e8ada02a96d55
+  networking:
+    canal: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  subnets:
+  - id: subnet-02581c5dc88011196
+    name: utility-eu-west-3a
+    type: Utility
+    zone: eu-west-3a
+  - id: subnet-04f8ad816288394de
+    name: utility-eu-west-3b
+    type: Utility
+    zone: eu-west-3b
+  - id: subnet-021c5f62c2252f7bc
+    name: utility-eu-west-3c
+    type: Utility
+    zone: eu-west-3c
+  - egress: nat-0596cd9f824ca0157
+    id: subnet-0ce971032fbf63592
+    name: eu-west-3a
+    type: Private
+    zone: eu-west-3a
+  - egress: nat-0f80c5ee13398e1c5
+    id: subnet-03215cf0fb5db6793
+    name: eu-west-3b
+    type: Private
+    zone: eu-west-3b
+  - egress: nat-0cc88fed2849b23d9
+    id: subnet-0a812d51a2ca72934
+    name: eu-west-3c
+    type: Private
+    zone: eu-west-3c
+  topology:
+    dns:
+      type: Public
+    masters: private
+    nodes: private
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: k8s.adevinta-test.com
+  name: master-eu-west-3a
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: 1.15.3
+  machineType: t2.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - eu-west-3a
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: k8s.adevinta-test.com
+  name: master-eu-west-3b
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: 1.15.3
+  machineType: t2.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - eu-west-3b
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: k8s.adevinta-test.com
+  name: master-eu-west-3c
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: 1.15.3
+  machineType: t2.medium
+  maxSize: 1
+  minSize: 1
+  role: Master
+  subnets:
+  - eu-west-3c
+---
+apiVersion: kops/v1alpha2
+kind: InstanceGroup
+metadata:
+  labels:
+    kops.k8s.io/cluster: k8s.adevinta-test.com
+  name: nodes
+spec:
+  image: kope.io/k8s-1.10-debian-stretch-amd64-hvm-ebs-2018-08-17
+  kubernetesVersion: 1.15.3
+  machineType: t2.small
+  maxSize: 2
+  minSize: 2
+  role: Node
+  subnets:
+  - eu-west-3a
+  - eu-west-3b
+  - eu-west-3c

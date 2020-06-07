@@ -1,0 +1,42 @@
+name: Build and Deploy to Production  Environment
+
+on:
+  push:
+    branches:
+    - master
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    # Publish to registry
+    - name: Build and Publish to Registry
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: jorgeive/sample-java-test-helloworld-app
+        tag_with_sha: true
+
+    # Deploy to Kubernetes
+     - name: Update application manifest on production
+       uses: steebchen/kubectl@master
+       env:
+         KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+       with:
+         args: apply -f /kubernetes #Check if there are no typos ?
+     - name: Update Production Image
+       uses: steebchen/kubectl@master
+       env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+       with:
+         args: set image --record deployment/adevinta-application=jorgeive/sample-java-test-helloworld-app:${{ github.sha }} 
+    - name: Verify deployment
+      uses: steebchen/kubectl@master
+      env:
+        KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        KUBECTL_VERSION: "1.15"
+      with:
+        args: '"rollout status deployment/adevinta-application"'
