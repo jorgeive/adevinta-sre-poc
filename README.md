@@ -117,7 +117,7 @@ helm repo update
 ```
 Deploy nginx ingress stable helm chart:
 ```bash
-helm install clarity-ingress stable/nginx-ingress
+helm install adevinta-ingress stable/nginx-ingress
 ```
 Deploy ingress manifest to the cluster
 ```bash
